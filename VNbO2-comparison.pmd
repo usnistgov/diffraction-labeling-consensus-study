@@ -29,7 +29,7 @@ algo_labels['Nb'] *= 0.01
 Room temperature $V_{x}Nb_{1-x}O_2$ diffraction data patterns as function of Nb content.
 With increasing Nb content, the diffraction peak broadens and shifts to the left before sharpening up again.
 
-```python, echo=True
+```python, echo=True, width='400px'
 from VNbO2.data import io
 
 # load the dataset:
@@ -59,7 +59,7 @@ plt.show()
 $VO_2$ diffraction data with increasing temperature.
 In this case two distinct diffraction peaks are clearly identifiable.
 
-```python, echo=True
+```python, echo=True, width='400px'
 
 display = [44, 132, 220, 308]
 offsets = [0, 60, 80, 60]
@@ -87,7 +87,7 @@ Here we plot the per-point Shannon entropy of the label distribution.
 Shannon entropy of 0 indicates unanimity among the experts.
 Increasing entropy values indicate higher levels of disagreement between experts.
 
-```python, echo=False
+```python, echo=False, width='400px'
 import re
 
 # human labeler columns start with HL
@@ -114,7 +114,7 @@ plt.show()
 
 Now let's visualize the consensus between expert annotators.
 
-```python, echo=True, results='hidden'
+```python, echo=True, results='hidden', width='400px'
 from VNbO2 import gp
 
 # merge all labels into a single table
@@ -142,11 +142,11 @@ plt.show()
 
 We can use this consensus model to rank cluster assignments relative to the human annotators.
 
-```python
+```python, width='400px'
 from VNbO2.utils import order_labels
 
-# algo_key = 'Brian_spectral_clustering'
-algo_key = 'NREL_kmeans_cluster'
+algo_key = 'Cosine-Local-Scaling-Spectral'
+
 X = algo_labels.loc[:,('Nb', 'temp')].values.astype(np.float64)
 Y = order_labels(algo_labels[algo_key], algo_labels['Nb'])
 
@@ -168,7 +168,6 @@ plt.scatter(algo_labels['Nb'][s], algo_labels['temp'][s], c='none', edgecolors='
 # np.array(Yvar).min()
 plt.xlabel('Nb')
 plt.ylabel('temperature (C)');
-# plt.savefig('VNb-cluster-example.png')
 plt.show()
 
 ```
@@ -192,7 +191,7 @@ loglik.to_csv('data/cluster_assignment_loglik.csv')
 
 ## Evaluate the VAE results
 
-```python
+```python, width='400px'
 df_vae = pd.read_csv('data/vae/Summary/summary_2d_threeGMM.txt', delim_whitespace=True)
 df_vae['Nb'] = 1 - 0.01*df_vae['C']
 X = df_vae.loc[:,('Nb', 'T')]
@@ -229,7 +228,7 @@ vae_loglik.to_csv('data/cluster_assignment_loglik_vae.csv')
 ```
 
 ## Compare log relative likelihood for all models
-```python
+```python, width='400px'
 loglik = pd.read_csv('data/cluster_assignment_loglik.csv', index_col=0)
 loglik = loglik.sort_values(by=['Nb', 'temp']).reset_index()
 vae_loglik = pd.read_csv('data/cluster_assignment_loglik_vae.csv', index_col=0)
@@ -257,7 +256,7 @@ plt.show()
 
 ## Run a case study on composition threshold
 
-```python
+```python, width='400px'
 from VNbO2 import cluster
 from VNbO2.data import io
 ar = (27, 28.5)
@@ -290,7 +289,7 @@ plt.show()
 ```
 
 
-```python
+```python, width='400px'
 thresholds = np.arange(0.2, 0.31, 0.01)
 logliks = []
 
@@ -309,7 +308,7 @@ for threshold in thresholds:
 plt.plot(thresholds, [ll.sum() for ll in logliks])
 ```
 
-```python
+```python, width='400px'
 def evaluate_patched_clustering(L, df, Nb_cutoff=0.2):
     eval_at = df['Nb'] <= Nb_cutoff
     df_eval = df.loc[:,('Nb', 'temp')].copy()

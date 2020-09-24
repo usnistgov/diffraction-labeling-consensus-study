@@ -50,7 +50,7 @@ plt.annotate('a', xy=(0.04, 0.9), xycoords='axes fraction', fontsize=24)
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure3_1.png)\
+![](figures/VNbO2-comparison_figure3_1.png){width=400px}\
 
 
 $VO_2$ diffraction data with increasing temperature.
@@ -77,7 +77,7 @@ plt.legend(handles[::-1], labels[::-1])
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure4_1.png)\
+![](figures/VNbO2-comparison_figure4_1.png){width=400px}\
 
 
 ## expert phase assignment
@@ -89,7 +89,7 @@ Shannon entropy of 0 indicates unanimity among the experts.
 Increasing entropy values indicate higher levels of disagreement between experts.
 
 
-![](figures/VNbO2-comparison_figure5_1.png)\
+![](figures/VNbO2-comparison_figure5_1.png){width=400px}\
 
 
 Now let's visualize the consensus between expert annotators.
@@ -121,7 +121,7 @@ plt.scatter(annotations['Nb'], annotations['temp'], c=se, cmap='Blues', edgecolo
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure6_1.png)\
+![](figures/VNbO2-comparison_figure6_1.png){width=400px}\
 
 
 We can use this consensus model to rank cluster assignments relative to the human annotators.
@@ -130,8 +130,8 @@ We can use this consensus model to rank cluster assignments relative to the huma
 ```python
 from VNbO2.utils import order_labels
 
-# algo_key = 'Brian_spectral_clustering'
-algo_key = 'NREL_kmeans_cluster'
+algo_key = 'Cosine-Local-Scaling-Spectral'
+
 X = algo_labels.loc[:,('Nb', 'temp')].values.astype(np.float64)
 Y = order_labels(algo_labels[algo_key], algo_labels['Nb'])
 
@@ -153,59 +153,10 @@ plt.scatter(algo_labels['Nb'][s], algo_labels['temp'][s], c='none', edgecolors='
 # np.array(Yvar).min()
 plt.xlabel('Nb')
 plt.ylabel('temperature (C)');
-# plt.savefig('VNb-cluster-example.png')
 plt.show()
 ```
 
-```
----------------------------------------------------------------------------KeyError
-Traceback (most recent call last)/usr/local/lib/python3.8/site-
-packages/pandas/core/indexes/base.py in get_loc(self, key, method,
-tolerance)
-   2645             try:
--> 2646                 return self._engine.get_loc(key)
-   2647             except KeyError:
-pandas/_libs/index.pyx in pandas._libs.index.IndexEngine.get_loc()
-pandas/_libs/index.pyx in pandas._libs.index.IndexEngine.get_loc()
-pandas/_libs/hashtable_class_helper.pxi in
-pandas._libs.hashtable.PyObjectHashTable.get_item()
-pandas/_libs/hashtable_class_helper.pxi in
-pandas._libs.hashtable.PyObjectHashTable.get_item()
-KeyError: 'NREL_kmeans_cluster'
-During handling of the above exception, another exception occurred:
-KeyError                                  Traceback (most recent call
-last)<ipython-input-1-ea0608876a1c> in <module>
-      4 algo_key = 'NREL_kmeans_cluster'
-      5 X = algo_labels.loc[:,('Nb',
-'temp')].values.astype(np.float64)
-----> 6 Y = order_labels(algo_labels[algo_key], algo_labels['Nb'])
-      7
-      8 E, error_indicator = gp.variational_log_likelihoods(X, Y, m)
-/usr/local/lib/python3.8/site-packages/pandas/core/frame.py in
-__getitem__(self, key)
-   2798             if self.columns.nlevels > 1:
-   2799                 return self._getitem_multilevel(key)
--> 2800             indexer = self.columns.get_loc(key)
-   2801             if is_integer(indexer):
-   2802                 indexer = [indexer]
-/usr/local/lib/python3.8/site-packages/pandas/core/indexes/base.py in
-get_loc(self, key, method, tolerance)
-   2646                 return self._engine.get_loc(key)
-   2647             except KeyError:
--> 2648                 return
-self._engine.get_loc(self._maybe_cast_indexer(key))
-   2649         indexer = self.get_indexer([key], method=method,
-tolerance=tolerance)
-   2650         if indexer.ndim > 1 or indexer.size > 1:
-pandas/_libs/index.pyx in pandas._libs.index.IndexEngine.get_loc()
-pandas/_libs/index.pyx in pandas._libs.index.IndexEngine.get_loc()
-pandas/_libs/hashtable_class_helper.pxi in
-pandas._libs.hashtable.PyObjectHashTable.get_item()
-pandas/_libs/hashtable_class_helper.pxi in
-pandas._libs.hashtable.PyObjectHashTable.get_item()
-KeyError: 'NREL_kmeans_cluster'
-```
-
+![](figures/VNbO2-comparison_figure7_1.png){width=400px}\
 
 
 Compute log likelihoods for each cluster assigment:
@@ -247,7 +198,7 @@ plt.scatter(X['Nb'], X['T'], c=Y)
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure9_1.png)\
+![](figures/VNbO2-comparison_figure9_1.png){width=400px}\
 
 
 
@@ -315,7 +266,7 @@ plt.savefig('figures/cluster_log_relative_likelihoods.png', bbox_inches='tight')
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure11_1.png)\
+![](figures/VNbO2-comparison_figure11_1.png){width=400px}\
 
 
 ## Run a case study on composition threshold
@@ -334,7 +285,7 @@ plt.ylabel('T')
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure12_1.png)\
+![](figures/VNbO2-comparison_figure12_1.png){width=400px}\
 
 
 
@@ -381,10 +332,10 @@ plt.plot(thresholds, [ll.sum() for ll in logliks])
 ```
 
 ```
-[<matplotlib.lines.Line2D at 0x14b841040>]
+[<matplotlib.lines.Line2D at 0x1475b3160>]
 ```
 
-![](figures/VNbO2-comparison_figure14_1.png)\
+![](figures/VNbO2-comparison_figure14_1.png){width=400px}\
 
 
 
@@ -432,5 +383,5 @@ plt.savefig('figures/spectral_composition_study_rel_lik.png', bbox_inches='tight
 plt.show()
 ```
 
-![](figures/VNbO2-comparison_figure15_1.png)\
+![](figures/VNbO2-comparison_figure15_1.png){width=400px}\
 
