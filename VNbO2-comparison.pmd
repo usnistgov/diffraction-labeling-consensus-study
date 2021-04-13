@@ -29,7 +29,7 @@ algo_labels['Nb'] *= 0.01
 Room temperature $V_{x}Nb_{1-x}O_2$ diffraction data patterns as function of Nb content.
 With increasing Nb content, the diffraction peak broadens and shifts to the left before sharpening up again.
 
-```python, echo=True, width='400px'
+```python, echo=True, width='400'
 from VNbO2.data import io
 
 # load the dataset:
@@ -94,11 +94,13 @@ import re
 labelers = list(filter(lambda s: re.match('HL', s), annotations.columns))
 L = annotations.loc[:,labelers]
 
+L.iloc[:,1:]
+
 # get per-point distribution for each of the three phase labels
 counts = np.apply_along_axis(
     lambda x: np.bincount(x, minlength=3),
     axis=1,
-    arr=L
+    arr=L.iloc[:,1:]
 )
 
 # compute the label entropy (shannon entropy) for each point
@@ -116,7 +118,7 @@ Now let's visualize the consensus between expert annotators.
 
 ```python, echo=True, results='hidden', width='400px'
 from VNbO2 import gp
-
+all_labels
 # merge all labels into a single table
 all_labels = []
 for labeler in labelers:
@@ -126,6 +128,8 @@ for labeler in labelers:
     all_labels.append(_df)
 
 all_labels = pd.concat(all_labels)
+all_labels["labeler"].unique()
+all_labels = all_labels[all_labels["labeler"] != "HL3"]
 
 # fit a GP classifier to model the human expert consensus...
 X = all_labels.loc[:,('Nb', 'temp')].values
@@ -137,6 +141,95 @@ c, extent = gp.snapshot(df, m);
 
 # plot the label entropy over top of the GP consensus...
 plt.scatter(annotations['Nb'], annotations['temp'], c=se, cmap='Blues', edgecolors='k')
+plt.show()
+```
+
+
+```python, echo=True, results='hidden', width='400px'
+from VNbO2 import gp
+from pathlib import Path
+df = pd.read_csv(Path('data') / 'Compare ML Labels.csv', index_col=0)
+df['Nb'] = (100 - df['V'])/100
+
+labelers = [
+    'Comp-Distance-Spectral',
+    'Cosine-Local-Scaling-Spectral',
+    'Cosine-Spectral',
+    'VAE-Spectral'
+
+
+]
+labels = df.loc[:,labelers]
+labelers
+all_labels = []
+for labeler in labelers:
+    print(labeler)
+    _df = df.loc[:,('Nb', 'temp', labeler)]
+    _df = _df.rename(columns={labeler: 'label'})
+    _df['labeler'] = labeler
+    all_labels.append(_df)
+all_labels
+all_labels = pd.concat(all_labels)
+
+# # merge all labels into a single table
+# all_labels = []
+# for labeler in labelers:
+#     _df = annotations.loc[:,('Nb', 'temp', labeler)]
+#     _df = _df.rename(columns={labeler: 'label'})
+#     _df['labeler'] = labeler
+#     all_labels.append(_df)
+#
+# all_labels = pd.concat(all_labels)
+# all_labels["labeler"].unique()
+# all_labels = all_labels[all_labels["labeler"] != "HL5"]
+
+# fit a GP classifier to model the human expert consensus...
+X = all_labels.loc[:,('Nb', 'temp')].values
+y = all_labels['label'].values
+m = gp.fit_sparse_gp(X, y[:,None], n_classes=3)
+
+# visualize the consensus model
+c, extent = gp.snapshot(df, m);
+
+# plot the label entropy over top of the GP consensus...
+plt.scatter(annotations['Nb'], annotations['temp'], c=se, cmap='Blues', edgecolors='k')
+plt.show()
+```
+
+```python
+# visualize the consensus model
+# c, extent = gp.snapshot_gray(df, m);
+c, extent = gp.snapshot(df, m, kelvin=True);
+
+# # get per-point distribution for each of the three phase labels
+# counts = np.apply_along_axis(lambda x: np.bincount(x, minlength=3), axis=1, arr=labels)
+#
+# # compute the label entropy (shannon entropy) for each point
+# se = stats.entropy(counts, axis=1)
+
+np.unique(se).size
+
+# plot the label entropy over top of the GP consensus...
+markers = [".", "o", "s", "^"]
+for marker, sval in zip(markers, np.unique(se)):
+    edgecol= "k"
+    if sval == 0:
+        edgecol="gray"
+    _s = np.array(se) == sval
+    plt.scatter(
+        annotations['Nb'][_s],
+        annotations['temp'][_s]+273,
+        c="w",
+        # c=se[_s],
+        # cmap='Greys',
+        edgecolors=edgecol,
+        marker=marker,
+        label=f"{sval:.03f}",
+    )
+plt.legend(title="Label Entropy", loc="upper right")
+# plt.savefig("human-labelers.tiff", bbox_inches="tight")
+plt.savefig("human-labelers-subset.tiff", bbox_inches="tight")
+# plt.savefig("ml-labelers.tiff", bbox_inches="tight")
 plt.show()
 ```
 
