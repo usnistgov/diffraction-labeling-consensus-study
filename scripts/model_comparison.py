@@ -53,7 +53,7 @@ labelers = list(filter(lambda s: re.match("HL", s), annotations.columns))
 
 # with four annotators and three categories
 # the max possible entropy is:
-entropy_max = stats.entropy([1, 1, 2])
+entropy_max = stats.entropy([1, 1, 1])
 
 L = annotations.loc[:, labelers]
 L = L[annotations.Nb <= algo_labels.Nb.max()]
