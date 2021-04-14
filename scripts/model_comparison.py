@@ -68,6 +68,9 @@ weights = 1 - label_entropy / entropy_max
 mode, count = stats.mode(L, axis=1)
 mode = np.squeeze(mode)
 
+# enforce mixed-phase for ties
+mode[label_entropy == stats.entropy([0, 2, 2])] = 1
+
 algo_keys = algo_labels.columns[3:]
 X = algo_labels.loc[:, ("Nb", "temp")].values.astype(np.float64)
 loglik = algo_labels.iloc[:, :3].copy()
